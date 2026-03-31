@@ -35,24 +35,26 @@
         }
         .shake-it { animation: shake 0.2s; animation-iteration-count: 2; }
 
-        @keyframes pulse-red {
-            0% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.05); }
-            100% { opacity: 1; transform: scale(1); }
-        }
-
         #bg-canvas { position: fixed; top: 0; left: 0; z-index: -1; width: 100vw; height: 100vh; }
         
-        /* PAGE STYLING - Fix for scrolling at higher levels */
-        .page { 
+        #homePage, #modePage, #settingsPage, #scorePage, #timeDifficultyPage, #levelSelectPage { 
             display: none; width: 100vw; height: 100vh; 
             position: fixed; top: 0; left: 0; 
-            flex-direction: column; align-items: center; 
-            overflow-y: auto; padding-bottom: 40px;
+            flex-direction: column; justify-content: center; align-items: center; 
         }
 
+        #gamePage { 
+    display: none; width: 100vw; height: 100vh; 
+    position: fixed; top: 0; left: 0; 
+    flex-direction: column; justify-content: center; align-items: center;
+    /* Add this line to push content up away from the power-up bar */
+    padding-bottom: 120px; 
+    box-sizing: border-box;
+}
+        
+
         #mainLogo {
-            font-size: 2.5rem; margin: 60px 0 20px; letter-spacing: 2px;
+            font-size: 2.5rem; margin: 20px 0; letter-spacing: 2px;
             background: linear-gradient(to bottom, var(--neon-purple), var(--deep-purple));
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 0 10px var(--deep-purple));
@@ -67,23 +69,40 @@
         }
         .btn:active { transform: scale(0.95); border-color: var(--neon-purple); }
 
-        .header-bar {
-            width: 100%; min-height: 60px;
-            display: flex; justify-content: flex-end; align-items: center;
-            padding: 0 20px; box-sizing: border-box; z-index: 50;
-        }
+        
 
         .pause-btn {
-            width: 45px; height: 45px; background: var(--danger-red);
-            border: 3px solid #fff; color: white; font-size: 1.2rem;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; font-family: 'Press Start 2P', cursive;
-            box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
-        }
+    position: absolute !important;
+
+    /* ✅ ALIGN WITH HEADER BAR */
+    top: 130px !important;
+    transform: translateY(12px) translateX(200px);
+
+    /* ✅ KEEP HORIZONTAL ALIGNMENT */
+    right: 49.1% !important;
+    left: auto !important;
+
+    margin: 0 !important;
+
+    width: 45px;
+    height: 45px;
+    background: var(--danger-red);
+    border: 3px solid #fff;
+    color: white;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+    box-shadow: 0 0 10px rgba(255, 71, 87, 0.4);
+    z-index: 1000;
+}
 
         #levelGrid {
             display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; 
-            padding: 20px; width: fit-content; margin: 0 auto; box-sizing: border-box;
+            padding: 20px; max-height: 65vh; overflow-y: auto; width: fit-content; 
+            margin: 0 auto; box-sizing: border-box;
         }
 
         .lvl-btn {
@@ -97,8 +116,10 @@
         .lvl-btn div { z-index: 2; position: relative; }
         .lvl-btn .star-row { font-size: 1.6rem; color: var(--warning-yellow); text-shadow: 0 0 12px rgba(234, 179, 8, 0.8); line-height: 0.8; margin-top: 5px; pointer-events: none; display: block; }
 
-        .canvas-wrap { display: flex; flex-direction: column; gap: 15px; align-items: center; position: relative; margin: 10px 0; }
-        canvas.game-cvs { border: 4px solid #1a1a2e; image-rendering: pixelated; background: white; max-width: 90vw; box-shadow: 0 0 20px rgba(139, 0, 255, 0.2); transition: filter 0.3s ease; }
+        .grid-lock { width: 45px; height: 45px; }
+
+        .canvas-wrap { display: flex; flex-direction: column; gap: 15px; align-items: center; position: relative; }
+        canvas.game-cvs { border: 4px solid #1a1a2e; image-rendering: pixelated; background: white; max-width: 90vw; max-height: 35vh; box-shadow: 0 0 20px rgba(139, 0, 255, 0.2); transition: filter 0.3s ease; }
         
         .stats-bar { width: 90%; max-width: 400px; display: inline-flex; flex-direction: column; gap: 8px; margin: 10px; background: rgba(17, 17, 17, 0.9); padding: 12px; border: 3px solid #333; font-size: 0.5rem; }
         .stats-row { display: flex; justify-content: space-between; align-items: center; }
@@ -106,20 +127,56 @@
         .p-heart { width: 14px; height: 12px; background-color: var(--danger-red); clip-path: polygon(0 25%, 20% 25%, 20% 0, 45% 0, 45% 25%, 55% 25%, 55% 0, 80% 0, 80% 25%, 100% 25%, 100% 50%, 80% 50%, 80% 75%, 60% 75%, 60% 100%, 40% 100%, 40% 75%, 20% 75%, 20% 50%, 0 50%); }
         .p-heart.lost { background: #333; opacity: 0.3; }
 
-        #timerContainer { width: 100%; height: 8px; background: #222; border: 1px solid #444; margin: 5px 0; }
-        #timerBar { width: 100%; height: 100%; background: var(--time-blue); transition: width 0.1s linear; }
+        #timerContainer { width: 100%; height: 8px; background: #222; border: 1px solid #444; margin: 5px 0; display: none; overflow: hidden;}
+        #timerBar { width: 100%; height: 100%; background: var(--time-blue); transition: width 0.1s linear, background-color 0.3s; }
 
         .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); flex-direction: column; justify-content: center; align-items: center; z-index: 100; }
         .panel { background: #000; padding: 25px; border: 4px solid #333; width: 85%; max-width: 400px; text-align: center; }
 
-        /* Power grid changed from fixed to relative to avoid overlaying canvases */
-        .power-grid { display: flex; gap: 10px; justify-content: center; padding: 25px 15px; width: 100%; box-sizing: border-box; margin-top: auto; }
+        .power-grid { 
+    display: flex; 
+    gap: 30px; 
+    justify-content: center; 
+    padding: 20px 0 30px 0; /* Extra bottom padding for thumb clearance */
+    background: #050508;    /* Solid background matches body */
+    border-top: 2px solid #333; 
+    width: 100%; 
+    position: fixed; 
+    bottom: 0; 
+    left: 0; 
+    box-sizing: border-box;
+    z-index: 10; /* Ensures it stays on top of canvases */
+}
         .p-unit { position: relative; display: flex; flex-direction: column; align-items: center; }
-        .p-symbol-btn { width: 60px; height: 50px; border: 2px solid #444; background: #111; cursor: pointer; display: flex; justify-content: center; align-items: center; clip-path: polygon(10% 0, 100% 0, 100% 70%, 90% 100%, 0 100%, 0 30%); }
+        .p-symbol-btn { 
+    width: 60px; 
+    height: 50px; 
+    border: 4px solid #444; /* Light grey outline */
+    background: #111;       /* Dark grey background */
+    cursor: pointer; 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    padding: 0;
+}
+
+.p-symbol-btn:active {
+    border-color: var(--neon-purple);
+    background: #222;
+}
+
+.p-symbol-btn:active {
+    border-color: var(--neon-purple);
+    background: #222;
+}
         .p-unit span { position: absolute; top: -12px; right: -5px; background: #fff; color: #000; padding: 2px 5px; font-size: 0.45rem; border: 1px solid #000; z-index: 2; }
 
         .g-particle { position: fixed; pointer-events: none; z-index: 99; image-rendering: pixelated; }
         #feedbackPopup { position: fixed; pointer-events: none; z-index: 200; text-align: center; font-family: 'Press Start 2P', cursive; display: none; filter: drop-shadow(0 0 8px rgba(0,0,0,0.9)); }
+        
+        /* New Caution Styling */
+        #pauseWarning { font-size: 0.65rem; line-height: 1.4; margin-bottom: 25px; letter-spacing: 1px; animation: pulseRed 1s infinite; }
+        @keyframes pulseRed { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
     </style>
 </head>
 <body>
@@ -127,42 +184,39 @@
     <canvas id="bg-canvas"></canvas>
     <div id="feedbackPopup"></div>
 
-    <div id="homePage" class="page" style="display: flex;">
+    <div id="homePage" style="display: flex;">
         <h1 id="mainLogo">PX SCAN</h1>
         <button class="btn" onclick="showModes()">START SCAN</button>
         <button class="btn" onclick="showScoreboard()">SCOREBOARD</button>
         <button class="btn" onclick="showSettings()">SETTINGS</button>
     </div>
 
-    <div id="modePage" class="page">
-        <h2 style="font-size: 0.8rem; margin-top: 60px;">SELECT MODE</h2>
+    <div id="modePage">
+        <h2 style="font-size: 0.8rem;">SELECT MODE</h2>
         <button class="btn" style="border-color: var(--neon-purple);" onclick="showLevelSelect()">NORMAL MODE</button>
         <button class="btn" onclick="showTimeDifficulties()">TIME ATTACK</button>
         <button class="btn" onclick="exitToHome()">BACK</button>
     </div>
 
-    <div id="levelSelectPage" class="page">
-        <div class="header-bar">
-            <div class="pause-btn" onclick="showModes()">X</div>
-        </div>
-        <h2 style="font-size: 0.8rem; color: var(--neon-purple); margin: 20px 0;">MISSION MAP</h2>
+    <div id="levelSelectPage" style="position: relative;">
+        <div class="pause-btn" onclick="showModes()">X</div>
+        
+        <h2 style="font-size: 0.8rem; color: var(--neon-purple); margin: 80px 0 20px;">MISSION MAP</h2>
         <div id="levelGrid"></div>
     </div>
 
-    <div id="timeDifficultyPage" class="page">
-        <h2 style="font-size: 0.8rem; color: var(--time-blue); margin-top: 60px;">TIME SETTINGS</h2>
+    <div id="timeDifficultyPage">
+        <h2 style="font-size: 0.8rem; color: var(--time-blue);">TIME SETTINGS</h2>
         <button class="btn" onclick="selectTimeAttack(90, 1)">NORMAL (90s)</button>
         <button class="btn" style="border-color: var(--warning-yellow);" onclick="selectTimeAttack(60, 1.5)">HARD (60s)</button>
         <button class="btn" style="border-color: var(--danger-red);" onclick="selectTimeAttack(30, 2)">IMPOSSIBLE (30s)</button>
         <button class="btn" onclick="showModes()">BACK</button>
     </div>
 
-    <div id="gamePage" class="page">
-        <div class="header-bar">
-            <div class="pause-btn" onclick="togglePause()">X</div>
-        </div>
+    <div id="gamePage" style="position: relative;">
+        <div class="pause-btn" onclick="togglePause()">X</div>
 
-        <div class="stats-bar">
+        <div class="stats-bar" style="margin-top: 60px;">
             <div class="stats-row">
                 <div id="lvlLabel">MISSION:</div><div id="lvlDisplay">1</div>
                 <div id="lifeUI" style="display: flex; gap: 8px;">
@@ -172,7 +226,7 @@
                 </div>
                 <div id="timeText" style="display:none; color:var(--time-blue);">TIME:<span id="seconds">30</span>s</div>
             </div>
-            <div id="timerContainer" style="display:none;"><div id="timerBar"></div></div>
+            <div id="timerContainer"><div id="timerBar"></div></div>
             <div class="stats-row">
                 <div style="color:var(--success-green)">SCORE:<span id="scoreDisplay">0</span></div>
             </div>
@@ -186,16 +240,40 @@
         </div>
 
         <div class="power-grid">
-            <button class="btn" style="width:50px; height: 50px; margin:0; font-size: 0.35rem; padding:0;" onclick="togglePause()">ESC</button>
-            <div class="p-unit"><span id="c1">3</span><button id="p1" class="p-symbol-btn" onclick="useNeuroScan()"><div style="width:20px; height:20px; background:white; clip-path:polygon(50% 0%, 0% 100%, 100% 100%);"></div></button></div>
-            <div class="p-unit"><span id="c2">3</span><button id="p2" class="p-symbol-btn" onclick="useTargetLock()"><div style="width:20px; height:20px; background:white; clip-path:polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, 20% 20%, 20% 80%, 80% 80%, 80% 20%, 20% 20%);"></div></button></div>
-            <div class="p-unit"><span id="c3">3</span><button id="p3" class="p-symbol-btn" onclick="useGlitchReveal()"><div style="width:20px; height:20px; background:white; clip-path:polygon(40% 0%, 100% 0%, 100% 40%, 60% 40%, 80% 60%, 20% 60%, 20% 100%, 0% 100%, 0% 40%, 40% 40%);"></div></button></div>
-        </div>
+    <div class="p-unit">
+        <span id="c1">3</span>
+        <button id="p1" class="p-symbol-btn" onclick="useNeuroScan()">
+            <svg viewBox="-4 -4 24 24" fill="white" style="width: 28px; height: 28px;">
+                <rect x="1" y="2" width="2" height="2"/><rect x="5" y="2" width="2" height="2"/><rect x="3" y="4" width="2" height="2"/><rect x="1" y="6" width="2" height="2"/><rect x="5" y="6" width="2" height="2"/>
+                <rect x="9" y="2" width="2" height="2"/><rect x="13" y="2" width="2" height="2"/><rect x="11" y="4" width="2" height="2"/><rect x="9" y="6" width="2" height="2"/><rect x="13" y="6" width="2" height="2"/>
+                <rect x="2" y="11" width="12" height="2"/>
+            </svg>
+        </button>
+    </div>
+
+    <div class="p-unit">
+        <span id="c2">3</span>
+        <button id="p2" class="p-symbol-btn" onclick="useTargetLock()">
+            <svg viewBox="-4 -4 24 24" fill="white" style="width: 28px; height: 28px;">
+                <path d="M0 8s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5zm8-2a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" />
+            </svg>
+        </button>
+    </div>
+
+    <div class="p-unit">
+        <span id="c3">3</span>
+        <button id="p3" class="p-symbol-btn" onclick="useGlitchReveal()">
+            <svg viewBox="-4 -4 24 24" fill="white" style="width: 28px; height: 28px;">
+                <path d="M10 1H5l-2 7h3l-2 7 10-9H9l2-5z" />
+            </svg>
+        </button>
+    </div>
+</div>
 
         <div id="pauseOverlay" class="overlay">
             <div class="panel">
-                <h2 id="pauseWarning" style="display:none; color: var(--danger-red); font-size: 0.9rem; margin-bottom: 30px; animation: pulse-red 1s infinite;">CAUTION: CLOCK IS STILL TICKING</h2>
-                <h2 style="font-size: 0.7rem; margin-bottom: 20px;">SYSTEM PAUSED</h2>
+                <p id="pauseWarning" style="display:none; color: var(--danger-red);">CAUTION:<br>CLOCK IS STILL TICKING</p>
+                <h2 style="font-size: 0.8rem; margin-bottom: 20px;">SYSTEM PAUSED</h2>
                 <button class="btn" style="border-color: var(--success-green);" onclick="togglePause()">RESUME</button>
                 <button class="btn" onclick="exitFromGame()">EXIT MISSION</button>
             </div>
@@ -221,8 +299,8 @@
         </div>
     </div>
 
-    <div id="scorePage" class="page">
-        <h2 style="font-size: 0.8rem; color: var(--warning-yellow); margin-top: 60px;">HIGH SCORES</h2>
+    <div id="scorePage">
+        <h2 style="font-size: 0.8rem; color: var(--warning-yellow);">HIGH SCORES</h2>
         <div class="panel" style="font-size: 0.5rem; line-height: 2;">
             <div>NORMAL: <span id="highNormal">0</span></div>
             <div>TIME ATTACK: <span id="highTime">0</span></div>
@@ -230,14 +308,19 @@
         <button class="btn" onclick="exitToHome()">BACK</button>
     </div>
 
-    <div id="settingsPage" class="page">
-        <h2 style="font-size: 0.8rem; margin-top: 60px;">SETTINGS</h2>
+    <div id="settingsPage">
+        <h2 style="font-size: 0.8rem;">SETTINGS</h2>
         <button id="soundToggle" class="btn" onclick="toggleSound()">SOUND: ON</button>
         <button class="btn" style="border-color: var(--danger-red);" onclick="resetProgress()">RESET ALL DATA</button>
         <button class="btn" onclick="exitToHome()">BACK</button>
     </div>
 
     <script>
+        /**
+         * PX SCAN GAME SCRIPT
+         * Version: 2.0 (Enhanced Difficulty Update)
+         */
+
         let level = 1, lives = 3, score = 0, mistakesInLevel = 0, gameActive = false, gameMode = 'normal', isPaused = false;
         let gridSize, tileSize, gap = 2, differences = [], currentHues = [], originalDiffsCount = 0;
         let pCounts = { s50: 3, hint: 3, ult: 3 };
@@ -300,7 +383,7 @@
         }
 
         function initLevel() {
-            lives = 3; mistakesInLevel = 0; comboCount = 0; lastClickTime = 0; isPaused = false;
+            lives = 3; mistakesInLevel = 0; gameActive = false; comboCount = 0; lastClickTime = 0; isPaused = false;
             document.querySelectorAll('.p-heart').forEach(h => h.classList.remove('lost'));
             document.getElementById('transition').style.display = 'none';
             document.getElementById('gameOver').style.display = 'none';
@@ -322,6 +405,7 @@
             
             if(gameMode === 'normal') generateSeededData(level);
             else { generateRandomData(); startTimer(); }
+            
             updateTaskText();
             gameActive = true;
         }
@@ -362,6 +446,7 @@
             if (!gameActive && !isPaused) return; 
             isPaused = !isPaused;
             if (isPaused) {
+                // Game logic stops, but we don't clear the timer interval anymore
                 document.getElementById('pauseOverlay').style.display = 'flex';
                 document.getElementById('pauseWarning').style.display = (gameMode === 'time') ? 'block' : 'none';
             } else {
@@ -371,36 +456,54 @@
 
         function exitFromGame() {
             clearInterval(timerInterval);
-            isPaused = false;
             if (gameMode === 'time') showTimeDifficulties();
             else showLevelSelect();
         }
 
         function handleInput(e, cvs) {
-            if(!gameActive || isPaused) return; e.preventDefault();
-            const rect = cvs.getBoundingClientRect();
-            const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            const clientY = e.touches ? e.touches[0].clientY : e.clientY;
-            const x = (clientX - rect.left) * (cvs.width / rect.width);
-            const y = (clientY - rect.top) * (cvs.height / rect.height);
-            const clicked = Math.floor(y / tileSize) * gridSize + Math.floor(x / tileSize);
-            if(differences.includes(clicked)) {
-                differences = differences.filter(i => i !== clicked);
-                createBurst(clientX, clientY, `hsl(${currentHues[clicked]}, 70%, 50%)`);
-                showFeedback(clientX, clientY);
-                Sound.correct(); updateTaskText();
-                [ctxL, ctxR].forEach(ctx => {
-                    ctx.fillStyle = "white"; ctx.font = `${Math.floor(tileSize * 0.5)}px 'Press Start 2P'`;
-                    ctx.textAlign = "center"; ctx.fillText("X", (clicked % gridSize) * tileSize + (tileSize/2), Math.floor(clicked / gridSize) * tileSize + (tileSize/1.5));
-                });
-                if(differences.length === 0) { gameActive = false; clearInterval(timerInterval); setTimeout(() => handleLevelWin(), 800); }
-            } else {
-                comboCount = 0; lastClickTime = 0; mistakesInLevel++; Sound.wrong();
-                document.body.classList.add('shake-it'); setTimeout(() => document.body.classList.remove('shake-it'), 200);
-                if(gameMode === 'time') timeLeft -= 5;
-                else { lives--; if(lives >= 0) document.getElementById('h'+(lives+1)).classList.add('lost'); if(lives <= 0) endGame("SCAN FAILED"); }
-            }
+    if(!gameActive || isPaused) return; e.preventDefault();
+    const rect = cvs.getBoundingClientRect();
+    const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+    const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+    const x = (clientX - rect.left) * (cvs.width / rect.width);
+    const y = (clientY - rect.top) * (cvs.height / rect.height);
+    const clicked = Math.floor(y / tileSize) * gridSize + Math.floor(x / tileSize);
+
+    if(differences.includes(clicked)) {
+        differences = differences.filter(i => i !== clicked);
+        
+        // --- NEW LOGIC: Increase time on correct scan ---
+        if(gameMode === 'time') {
+            // Adds 3 seconds per correct hit, capped at maxTime
+            timeLeft = Math.min(maxTime, timeLeft + 3); 
         }
+        // ------------------------------------------------
+
+        createBurst(clientX, clientY, `hsl(${currentHues[clicked]}, 70%, 50%)`);
+        showFeedback(clientX, clientY);
+        Sound.correct(); 
+        updateTaskText();
+        
+        [ctxL, ctxR].forEach(ctx => {
+            ctx.fillStyle = "white"; 
+            ctx.font = `${Math.floor(tileSize * 0.5)}px 'Press Start 2P'`;
+            ctx.textAlign = "center"; 
+            ctx.fillText("X", (clicked % gridSize) * tileSize + (tileSize/2), Math.floor(clicked / gridSize) * tileSize + (tileSize/1.5));
+        });
+
+        if(differences.length === 0) { 
+            gameActive = false; 
+            clearInterval(timerInterval); 
+            setTimeout(() => handleLevelWin(), 800); 
+        }
+    } else {
+        // ... rest of your existing "wrong hit" code ...
+        comboCount = 0; lastClickTime = 0; mistakesInLevel++; Sound.wrong();
+        document.body.classList.add('shake-it'); setTimeout(() => document.body.classList.remove('shake-it'), 200);
+        if(gameMode === 'time') timeLeft -= 5;
+        else { lives--; if(lives >= 0) document.getElementById('h'+(lives+1)).classList.add('lost'); if(lives <= 0) endGame("SCAN FAILED"); }
+    }
+}
 
         function showFeedback(x, y) {
             const now = Date.now();
@@ -415,13 +518,16 @@
                 else if (diff < 3500) word = feedbackWords[1];
                 else word = feedbackWords[0];
             }
-            lastClickTime = now; comboCount++;
+            lastClickTime = now;
+            comboCount++;
             const popup = document.getElementById('feedbackPopup');
             const wordColor = (word === "PERFECT" || word === "UNREAL") ? 'var(--warning-yellow)' : 'var(--success-green)';
             popup.innerHTML = `<div style="font-size: 1.2rem; color: ${wordColor}; margin-bottom: 10px; text-shadow: 0 0 10px ${wordColor};">${word}</div>
                 ${comboCount > 1 ? `<div style="color: var(--combo-orange); font-size: 1rem; text-shadow: 0 0 8px rgba(255, 159, 67, 0.8);">COMBO x${comboCount}</div>` : ''}`;
-            popup.style.display = 'block'; popup.style.left = `${Math.min(window.innerWidth - 100, Math.max(100, x)) - 75}px`;
-            popup.style.top = `${y - 100}px`; popup.style.opacity = 1;
+            popup.style.display = 'block';
+            popup.style.left = `${Math.min(window.innerWidth - 100, Math.max(100, x)) - 75}px`;
+            popup.style.top = `${y - 100}px`;
+            popup.style.opacity = 1;
             if (popup.activeAnim) clearInterval(popup.activeAnim);
             let op = 1, ty = y - 100;
             popup.activeAnim = setInterval(() => { op -= 0.015; ty -= 0.35; popup.style.opacity = op; popup.style.top = `${ty}px`; if (op <= 0) { clearInterval(popup.activeAnim); popup.style.display = 'none'; } }, 30);
@@ -440,7 +546,7 @@
         }
 
         function useNeuroScan() {
-            if (pCounts.s50 > 0 && differences.length > 0 && gameActive && !isPaused) {
+            if (pCounts.s50 > 0 && differences.length > 0 && (gameActive || isPaused)) {
                 pCounts.s50--; updatePowerUI(); Sound.power();
                 let nonT = []; for(let i=0; i<gridSize*gridSize; i++) if(!differences.includes(i)) nonT.push(i);
                 for(let j=0; j<Math.floor(nonT.length * 0.5); j++) {
@@ -450,14 +556,14 @@
             }
         }
         function useTargetLock() {
-            if (pCounts.hint > 0 && differences.length > 0 && gameActive && !isPaused) {
+            if (pCounts.hint > 0 && differences.length > 0 && (gameActive || isPaused)) {
                 pCounts.hint--; updatePowerUI(); Sound.power();
                 const tidx = differences[0];
                 [ctxL, ctxR].forEach(ctx => { ctx.strokeStyle = "white"; ctx.lineWidth = 4; ctx.strokeRect((tidx%gridSize)*tileSize+gap, Math.floor(tidx/gridSize)*tileSize+gap, tileSize-gap, tileSize-gap); });
             }
         }
         function useGlitchReveal() {
-            if (pCounts.ult > 0 && differences.length > 0 && gameActive && !isPaused) {
+            if (pCounts.ult > 0 && differences.length > 0 && (gameActive || isPaused)) {
                 pCounts.ult--; updatePowerUI(); Sound.power();
                 canvasL.style.filter = canvasR.style.filter = "invert(100%) brightness(150%) contrast(200%)";
                 for(let i=0; i < (gridSize*gridSize); i++) {
@@ -488,25 +594,38 @@
         }
 
         function renderLevelGrid() {
-            const grid = document.getElementById('levelGrid'); grid.innerHTML = '';
-            const offCanvas = document.createElement('canvas'); const offCtx = offCanvas.getContext('2d');
+            const grid = document.getElementById('levelGrid');
+            grid.innerHTML = '';
+            const offCanvas = document.createElement('canvas');
+            const offCtx = offCanvas.getContext('2d', { willReadFrequently: true });
             for (let i = 1; i <= 100; i++) {
                 const isUnlocked = i === 1 || (levelData[i - 1] && levelData[i - 1].cleared);
                 const data = levelData[i] || { stars: 0 };
-                const btn = document.createElement('div'); btn.className = `lvl-btn ${isUnlocked ? 'unlocked' : ''}`;
-                const config = getLevelConfig(i); const pTile = 10;
+                const btn = document.createElement('div');
+                btn.className = `lvl-btn ${isUnlocked ? 'unlocked' : ''}`;
+                const config = getLevelConfig(i);
+                const pTile = 10;
                 offCanvas.width = offCanvas.height = config.size * pTile;
-                let previewSeed = i * 888.88; const pRand = () => { previewSeed = (previewSeed * 9301 + 49297) % 233280; return previewSeed / 233280; };
+                let previewSeed = i * 888.88;
+                const pRand = () => { previewSeed = (previewSeed * 9301 + 49297) % 233280; return previewSeed / 233280; };
                 offCtx.clearRect(0, 0, offCanvas.width, offCanvas.height);
                 for (let y = 0; y < config.size; y++) {
                     for (let x = 0; x < config.size; x++) {
-                        const h = Math.floor(pRand() * 360); offCtx.fillStyle = `hsl(${h}, 70%, 50%)`; offCtx.fillRect(x * pTile, y * pTile, pTile, pTile);
+                        const h = Math.floor(pRand() * 360);
+                        offCtx.fillStyle = `hsl(${h}, 70%, 50%)`;
+                        offCtx.fillRect(x * pTile, y * pTile, pTile, pTile);
                     }
                 }
                 btn.style.backgroundImage = `url(${offCanvas.toDataURL()})`;
                 if (isUnlocked) {
-                    const numDiv = document.createElement('div'); numDiv.style.fontSize = "0.9rem"; numDiv.innerText = i; btn.appendChild(numDiv);
-                    if (data.stars > 0) { const starDiv = document.createElement('div'); starDiv.className = 'star-row'; starDiv.innerText = "★".repeat(data.stars); btn.appendChild(starDiv); }
+                    const numDiv = document.createElement('div');
+                    numDiv.style.fontSize = "0.9rem"; numDiv.innerText = i;
+                    btn.appendChild(numDiv);
+                    if (data.stars > 0) {
+                        const starDiv = document.createElement('div');
+                        starDiv.className = 'star-row'; starDiv.innerText = "★".repeat(data.stars);
+                        btn.appendChild(starDiv);
+                    }
                     btn.onclick = () => { level = i; startGame(); };
                 } else {
                     btn.innerHTML = `<div class="grid-lock"><svg viewBox="0 0 10 10" shape-rendering="crispEdges"><path d="M3 2h4v1H3zM2 3h1v2H2zM7 3h1v2H7z" fill="#FFD700" /><path d="M1 5h8v4H1z" fill="#EAB308" /><path d="M4 6h2v2H4z" fill="#000" /></svg></div>`;
@@ -520,19 +639,36 @@
         function showTimeDifficulties() { hideAll(); document.getElementById('timeDifficultyPage').style.display = 'flex'; }
         function selectTimeAttack(s, m) { gameMode = 'time'; maxTime = s; scoreMultiplier = m; level = 1; score = 0; startGame(); }
         function startGame() { hideAll(); document.getElementById('gamePage').style.display = 'flex'; pCounts = { s50: 3, hint: 3, ult: 3 }; updatePowerUI(); Sound.init(); initLevel(); }
-        function hideAll() { document.querySelectorAll('.page').forEach(d => d.style.display = 'none'); }
+        function hideAll() { document.querySelectorAll('div[id$="Page"]').forEach(d => d.style.display = 'none'); }
         function exitToHome() { location.reload(); }
         function updatePowerUI() { ['c1','c2','c3'].forEach((id, i) => { const k = ['s50','hint','ult'][i]; document.getElementById(id).innerText = pCounts[k]; document.getElementById('p'+(i+1)).disabled = pCounts[k] <= 0; }); }
         function updateTaskText() { document.getElementById('taskText').innerText = `SCAN: [${originalDiffsCount - differences.length}/${originalDiffsCount}]`; }
         
         function startTimer() { 
-            timeLeft = maxTime; clearInterval(timerInterval); 
+            timeLeft = maxTime; 
+            clearInterval(timerInterval); 
             timerInterval = setInterval(() => { 
-                // Removed isPaused check to keep timer running in background
+                // Removed isPaused check so it ticks in background
                 timeLeft -= 0.1; 
-                if(timeLeft <= 0) endGame("TIME EXPIRED"); 
+                if(timeLeft <= 0) {
+                    timeLeft = 0;
+                    endGame("TIME EXPIRED"); 
+                }
+                
+                const bar = document.getElementById('timerBar');
+                const ratio = timeLeft / maxTime;
+                
+                // Color Switching Logic
+                if (ratio > 0.66) {
+                    bar.style.background = 'var(--time-blue)';
+                } else if (ratio > 0.33) {
+                    bar.style.background = 'var(--warning-yellow)';
+                } else {
+                    bar.style.background = 'var(--danger-red)';
+                }
+
                 document.getElementById('seconds').innerText = Math.ceil(timeLeft); 
-                document.getElementById('timerBar').style.width = (timeLeft/maxTime*100)+'%'; 
+                bar.style.width = (ratio * 100) + '%'; 
             }, 100); 
         }
 
@@ -541,7 +677,17 @@
         function resetProgress() { if(confirm("Clear all data?")) { localStorage.clear(); location.reload(); } }
         function handleRetry() { startGame(); }
         function toggleSound() { soundEnabled = !soundEnabled; document.getElementById('soundToggle').innerText = `SOUND: ${soundEnabled?'ON':'OFF'}`; }
-        function endGame(reason) { gameActive = false; clearInterval(timerInterval); Sound.gameOver(); const key = gameMode === 'normal' ? 'pxscan_high' : 'pxscan_time'; if(score > (localStorage.getItem(key)||0)) localStorage.setItem(key, score); document.getElementById('deathReason').innerText = reason; document.getElementById('gameOver').style.display = 'flex'; }
+        function endGame(reason) { 
+            gameActive = false; 
+            isPaused = false;
+            clearInterval(timerInterval); 
+            Sound.gameOver(); 
+            const key = gameMode === 'normal' ? 'pxscan_high' : 'pxscan_time'; 
+            if(score > (localStorage.getItem(key)||0)) localStorage.setItem(key, score); 
+            document.getElementById('deathReason').innerText = reason; 
+            document.getElementById('finalScoreText').innerText = `SCORE: ${score}`;
+            document.getElementById('gameOver').style.display = 'flex'; 
+        }
 
         [canvasL, canvasR].forEach(cvs => {
             cvs.addEventListener('touchstart', (e) => handleInput(e, cvs));
